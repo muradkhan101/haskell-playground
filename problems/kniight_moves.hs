@@ -1,3 +1,4 @@
+import Control.Monad
 type KnightPos = (Int, Int)
 
 moveKnight :: KnightPos -> [KnightPos]
@@ -18,3 +19,9 @@ moveWithHistory list@(last:_) = map (\move -> move:list) (moveKnight last)
 move3WithHistory start = return [start] >>= moveWithHistory >>= moveWithHistory >>= moveWithHistory
 
 possibleIn3WithHistory start end = filter (\moves -> end `elem` moves) (move3 start)
+
+moveAnyWithHistory :: KnightPos -> Int -> [MoveHistory]
+moveAnyWithHistory start num = return [start] >>= foldr (<=<) return (replicate num moveWithHistory)
+
+possibleWithHistory :: KnightPos -> KnightPos -> Int -> [MoveHistory]
+possibleWithHistory start end num = filter (\moves -> end `elem` moves) (moveAnyWithHistory start num)
